@@ -1,13 +1,16 @@
-"""Programirana animacija: Python + Pillow. Pokretanje: python src/render.py.
+"""Procedural animation with Python and Pillow. Run: python src/render.py.
 
-Osnovna ilustracija je AI-generirana. Ovaj program animira rotor,
-zatvoreni tok energije, jezgru, gadgete i RGB ciglice. Likovi su mirni.
-Prompt za izradu osnovne ilustracije nije dio javnog projekta.
+The base illustration is AI-generated. This script animates the rotor,
+closed energy flow, core, gadgets and RGB bricks. The characters remain still.
+The image-generation prompt is not included in the public project.
 """
 from pathlib import Path
 from math import sin, cos, pi
 import argparse
 import random
+import shutil
+import subprocess
+import tempfile
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,7 +19,11 @@ TAU = 2 * pi
 CX, CY = 480, 209
 
 base = Image.open(ROOT / 'assets/scene.png').convert('RGB').resize((W, H), Image.Resampling.LANCZOS)
-# Pravi teksturirani rotor, odvojen od nepomicnog vanjskog kucista.
+# Lift shadows and midtones while preserving highlight detail.
+# Keep the original illustration unchanged; apply grading during rendering.
+tone_curve = [round(255 * (value / 255) ** 0.68) for value in range(256)]
+base = base.point(tone_curve * 3)
+# Extract the textured rotor from the stationary outer housing.
 R = 155
 rotor = base.crop((CX-R, CY-R, CX+R, CY+R))
 mask = Image.new('L', rotor.size)
@@ -37,7 +44,7 @@ def frame(index):
     out.paste(moving, (CX-R, CY-R), mask)
     light = Image.new('RGB', (W,H))
     d = ImageDraw.Draw(light)
-    # Tri svjetlosna putnika prolaze istom zatvorenom putanjom osmice.
+    # Three light particles follow the same closed figure-eight path.
     def infinity(a):
         return (CX+86*cos(a)/(1+sin(a)**2), CY+86*sin(a)*cos(a)/(1+sin(a)**2))
     for k in range(3):
@@ -48,7 +55,7 @@ def frame(index):
             color = tuple(int(c*brightness) for c in (90,211,238))
             radius = 1.1 if j else 2.1
             d.ellipse((x-radius,y-radius,x+radius,y+radius), fill=color)
-    # Kruzni tok energije uz unutarnji rub stroja.
+    # Circular energy flow along the inner rim of the machine.
     for k in range(4):
         angle = t+k*pi/2
         for j in range(24):
@@ -63,7 +70,7 @@ def frame(index):
         channels = [max(0,cos(t+phase-c*TAU/3))**2 for c in range(3)]
         color=tuple(int(245*intensity*v) for v in channels)
         d.rounded_rectangle((x,y,x+w,y+h),radius=1,fill=color)
-    # Blago pulsiranje gadgeta, bez naglih bljeskova.
+    # Gentle gadget pulses without abrupt flashes.
     for x,y,phase in [(190,314,0),(761,353,2),(843,170,4)]:
         b=.4+.3*sin(t+phase)
         d.ellipse((x-2,y-2,x+2,y+2),fill=(int(20*b),int(150*b),int(220*b)))
@@ -74,16 +81,16 @@ def frame(index):
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--frames',type=Path,help='Opcionalna mapa PNG kadrova za FFmpeg')
+    parser.add_argument('--frames',type=Path,help='Optional PNG frame directory for FFmpeg')
     args=parser.parse_args()
     if args.frames:
         args.frames.mkdir(parents=True,exist_ok=True)
         for i in range(N):
             frame(i).save(args.frames/f'{i:04d}.png')
-        print(f'Spremljeno {N} kadrova u {args.frames}')
+        print(f'Saved {N} frames to {args.frames}')
         return
     frames=[frame(i) for i in range(N)]
-    # Jedna paleta zadrzava stabilne boje kroz cijelu petlju.
+    # A shared palette keeps colors stable throughout the loop.
     sheet=Image.new('RGB',(W*3,H*2))
     for n,i in enumerate(range(0,N,20)):
         sheet.paste(frames[i],((n%3)*W,(n//3)*H))
@@ -91,8 +98,17 @@ def main():
     indexed=[im.quantize(palette=palette,dither=Image.Dither.NONE) for im in frames]
     dest=ROOT/'perpetuum.gif'
     indexed[0].save(dest,save_all=True,append_images=indexed[1:],duration=50,loop=0,optimize=True,disposal=1)
+    # FFmpeg reduces file size without changing frame count or duration.
+    ffmpeg = shutil.which('ffmpeg')
+    if ffmpeg:
+        with tempfile.TemporaryDirectory() as temp:
+            optimized = Path(temp) / 'optimized.gif'
+            subprocess.run([ffmpeg,'-hide_banner','-loglevel','error','-i',str(dest),
+                '-filter_complex','[0:v]split[a][b];[a]palettegen=max_colors=192:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
+                '-loop','0','-y',str(optimized)],check=True)
+            shutil.copyfile(optimized,dest)
     frames[0].save(ROOT/'assets/poster.jpg',quality=94)
-    print(f'Spremljeno: {dest} ({dest.stat().st_size/1024/1024:.2f} MB)')
+    print(f'Saved: {dest} ({dest.stat().st_size/1024/1024:.2f} MB)')
 
 if __name__=='__main__':
     main()
