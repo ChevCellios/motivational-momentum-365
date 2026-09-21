@@ -1,6 +1,6 @@
 # ⚡ Motivational Momentum 365
 
-[![Resonance — light waves from a small device become a shared rhythm](resonance.gif)](https://chevcellios.github.io/motivational-momentum-365/)
+[![Signal — a rooftop beacon sends cyan pulses across a rainy futuristic city](signal.gif)](https://chevcellios.github.io/motivational-momentum-365/)
 
 ![Language](https://img.shields.io/badge/language-English-green)
 ![Animation](https://img.shields.io/badge/animation-GIF-blueviolet)
@@ -14,26 +14,27 @@ One idea. One creation. Keep moving. Motivational Momentum 365 brings together A
 
 | Creation | Page | GIF |
 | --- | --- | --- |
-| 005 — Resonance | [Watch](https://chevcellios.github.io/motivational-momentum-365/) | [GIF](resonance.gif) |
+| 006 — Signal | [Watch](https://chevcellios.github.io/motivational-momentum-365/) | [GIF](signal.gif) |
+| 005 — Resonance | [Watch](https://chevcellios.github.io/motivational-momentum-365/resonance.html) | [GIF](resonance.gif) |
 | 004 — Beyond the Horizon | [Watch](https://chevcellios.github.io/motivational-momentum-365/horizon.html) | [GIF](horizon.gif) |
 | 003 — Emergence | [Watch](https://chevcellios.github.io/motivational-momentum-365/emergence.html) | [GIF](emergence.gif) |
 | 002 — Teleportation | [Watch](https://chevcellios.github.io/motivational-momentum-365/teleportation.html) | [GIF](teleportation.gif) |
 | 001 — Perpetuum | [Watch](https://chevcellios.github.io/motivational-momentum-365/perpetuum.html) | [GIF](perpetuum.gif) |
 
-## 📡 Latest creation — Resonance
+## 📡 Latest creation — Signal
 
-> Find your rhythm. Build your future.
+> One clear signal can travel farther than you think.
 
-A small device wakes above a circuit board. Concentric light waves travel across the desk, while a pulse of energy turns isolated signals into a shared rhythm. Every loop returns to the same source: consistency creates momentum.
+A rooftop beacon wakes in the rain and sends expanding cyan pulses over a distant city. Every loop begins with one small point of light and shows how a clear intention can travel far beyond its source.
 
-The dawn city, workbench and human figures are AI-assisted artwork. The expanding waves, equalizer pulse, energy paths and RGB indicators are animated through code.
+The rainy city, beacon and technicians are AI-assisted artwork. The expanding signal waves, rain, pulse light and orbital particles are animated through code.
 
 ## ✨ Features
 
-- bright cyberpunk city at dawn
-- rhythmic concentric light waves
-- animated device core and circuit-board energy paths
-- RGB status lights and pulse bars
+- rain-soaked cyberpunk rooftop and city skyline
+- concentric cyan signal waves
+- pulsing beacon core and orbital light particles
+- realistic reflections and animated rainfall
 - eight seconds, 160 frames and continuous looping
 - responsive pages with pause controls
 - all previous creations preserved
@@ -53,14 +54,14 @@ The background illustration was generated with AI assistance. The final animatio
 
 ## 🚀 Run locally
 
-Open `index.html` in a browser. To rebuild Resonance, install the dependencies and ensure FFmpeg is available on PATH:
+Open `index.html` in a browser. To rebuild Signal, install the dependencies and ensure FFmpeg is available on PATH:
 
 ```sh
 python -m pip install -r requirements.txt
-python src/render_resonance.py
+python src/render_signal.py
 ```
 
-The script reads `assets/resonance/base.png`, writes `resonance.gif` and saves a poster to `assets/resonance/poster.jpg`.
+The script reads `assets/signal/base.png`, writes `signal.gif` and saves a poster to `assets/signal/poster.jpg`.
 
 ## 📁 Project structure
 
@@ -68,6 +69,7 @@ The script reads `assets/resonance/base.png`, writes `resonance.gif` and saves a
 motivational-momentum-365/
 ├── README.md
 ├── index.html
+├── signal.gif
 ├── horizon.html
 ├── emergence.html
 ├── teleportation.html
@@ -79,10 +81,12 @@ motivational-momentum-365/
 ├── perpetuum.gif
 ├── assets/
 │   ├── resonance/
+│   ├── signal/
 │   ├── horizon/
 │   ├── emergence/
 │   └── teleportation/
 └── src/
+    ├── render_signal.py
     ├── render_resonance.py
     ├── render_horizon.py
     ├── render_emergence.py
